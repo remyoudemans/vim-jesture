@@ -75,6 +75,14 @@ function! AlternateMock()
    execute "e " . expand('%:p:h:h') . '/' . expand('%')
  else
    if !isdirectory("__mocks__")
+     call inputsave()
+     let l:shouldMkdir = input('__mocks__ directory does not exist. Create it? (y/N) ')
+     call inputrestore()
+     redraw 
+     if tolower(l:shouldMkdir) != 'y' && tolower(l:shouldMkdir) != 'yes'
+       return
+     endif
+
      call mkdir("__mocks__")
      echom "__mocks__ directory created."
    endif
@@ -83,9 +91,26 @@ function! AlternateMock()
 endfunction
 nmap <silent> <leader>jam :call AlternateMock()<CR>
 
+" Alternate between file.(js|jsx|ts|tsx) and file.test.(js|jsx|ts|tsx). If you
+" already have a __tests__ directory at that level, it will go to
+" ./__tests__/file.test.(js|jsx|ts|tsx) instead of file.test.(js|jsx|ts|tsx).
 function! AlternateTest()
-  " TODO: check if there's a __tests__ folder!
-  let l:targetFileName = expand('%:r:e') == 'test' ? expand('%:r:r') . '.' . expand('%:e') : expand('%:r:t') . '.test.' . expand('%:e')
-  execute "e " . l:targetFileName
+   let l:isTestFile = expand('%:r:e') == 'test'
+
+   if l:isTestFile
+     " if in __tests__ directory
+     if expand('%:p:h:t') == '__tests__'
+       " go to matching file outside __tests__ directory
+       execute "e " . expand('%:p:h:h') . '/' . expand('%:r:r') . '.' . expand('%:e')
+     else
+       execute "e " . expand('%:r:r') . '.' . expand('%:e')
+     endif
+   else
+     if isdirectory("__tests__")
+       execute "e __tests__/" . expand('%:r:t') . '.test.' . expand('%:e')
+     else 
+       execute "e " . expand('%:r:t') . '.test.' . expand('%:e')
+     endif
+   endif
 endfunction
 nmap <leader>jat :call AlternateTest()<CR>
