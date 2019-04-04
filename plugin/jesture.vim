@@ -45,7 +45,10 @@ nnoremap <silent> <leader>jto :call ToggleOnly()<CR>
 function! RemoveOnly()
   let l:initialCursorPos = getcurpos()
   let l:lineno = line(".")
-  %s/it.only(/it(/
+  call cursor(0, 0)
+  if search('it.only(', "cn") != 0
+    %s/it.only(/it(/
+  endif
   execute l:lineno
   call setpos('.', l:initialCursorPos)
 endfunction
