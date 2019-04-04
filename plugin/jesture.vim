@@ -1,4 +1,3 @@
-
 " Jest :JOnly or <leader>jo toggles whether current line's it is an it.only 
 "   and removes other it.only if there's already one in the buffer
 function! Onlify()
@@ -69,3 +68,24 @@ function! JestMock()
   execute "normal! 0f" . l:quoteType . "yi" . l:quoteType . "ojest.mock(" . l:quoteType . "\<C-O>p" . l:quoteType . ")\<Esc>"
 endfunction
 nnoremap <leader>jm :call JestMock()<CR>
+
+
+function! AlternateMock()
+ if expand('%:p:h:t') == '__mocks__'
+   execute "e " . expand('%:p:h:h') . '/' . expand('%')
+ else
+   if !isdirectory("__mocks__")
+     call mkdir("__mocks__")
+     echom "__mocks__ directory created."
+   endif
+   execute "e " . expand('%:p:h') . '/__mocks__/' . expand('%')
+ endif
+endfunction
+nmap <silent> <leader>jam :call AlternateMock()<CR>
+
+function! AlternateTest()
+  " TODO: check if there's a __tests__ folder!
+  let l:targetFileName = expand('%:r:e') == 'test' ? expand('%:r:r') . '.' . expand('%:e') : expand('%:r:t') . '.test.' . expand('%:e')
+  execute "e " . l:targetFileName
+endfunction
+nmap <leader>jat :call AlternateTest()<CR>
