@@ -1,5 +1,4 @@
 # vim-jesture
-An elegant set of jest helpers for testing javascript with ease
 
 **IMPORTANT**: _All_ mappings start with `<leader>j`. All of the following mapping
 descriptions omit it. Read every mapping as: `<leader>j{mapping}`.
