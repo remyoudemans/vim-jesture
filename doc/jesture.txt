@@ -23,10 +23,10 @@ at                      Alternate between `filename.*` and `filename.test.*`
                         `__tests__/filename.test.*`.
                         
                                                 *jesture_vt*
-vt                      Like previous mapping but opens in vertical split.
+vt                      Like `at` but opens in a vertical split.
                         
                                                 *jesture_ht*
-ht                      Like previous mapping but opens in horizontal split.
+ht                      Like `at` but opens in a horizontal split.
 
                                                 *jesture_am*
 am                      Alternate between `filename.*` and `__mocks__/filename.*`
@@ -34,10 +34,10 @@ am                      Alternate between `filename.*` and `__mocks__/filename.*
                         exist).
 
                                                 *jesture_vm*
-vm                      Like previous mapping but opens in vertical split.
+vm                      Like `am` but opens in a vertical split.
                         
                                                 *jesture_hm*
-hm                      Like previous mapping but opens in horizontal split.
+hm                      Like `am` but opens in a horizontal split.
                         
                                                 *jesture-only-mappings*
 Only mappings~
@@ -46,7 +46,7 @@ Only mappings~
 to                      Toggle current assertion between `it` and `it.only`.
 
                                                 *jesture_oo*
-oo                      Like previous mapping but also removes all other
+oo                      Like `to` but also removes all other
                         `only`s in buffer if it is toggling `only` on (making
                         the assertion the Only Only).
 
