@@ -1,0 +1,79 @@
+*jesture.txt*  An elegant set of jest helpers for testing javascript with ease
+Author:  Remy Oudemans <https://github.com/remyoudemans>
+License: MIT
+
+INTRODUCTION                                    *jesture*
+
+This plugin addresses a few repetitive tasks in Jest:
+ - alternating between mocks/tests and the files they mock/test
+ - toggling assertions between `it` and `it.only`
+ - mocking imports.
+
+MAPPINGS                                        *jesture-mappings*
+
+IMPORTANT: All mappings start with `<leader>j`. All of the following mapping
+descriptions omit it. Read every mapping as: `<leader>j{mapping}`.
+
+                                                *jesture-alternation-mappings*
+Alternation mappings~
+
+                                                *jesture_at*
+at                      Alternate between `filename.*` and `filename.test.*`
+                        or (if you already have a `__tests__` folder)
+                        `__tests__/filename.test.*`.
+                        
+                                                *jesture_vt*
+vt                      Like previous mapping but opens in vertical split.
+                        
+                                                *jesture_ht*
+ht                      Like previous mapping but opens in horizontal split.
+
+                                                *jesture_am*
+am                      Alternate between `filename.*` and `__mocks__/filename.*`
+                        (and optionally create `__mocks__` directory if it doesn't
+                        exist).
+
+                                                *jesture_vm*
+vm                      Like previous mapping but opens in vertical split.
+                        
+                                                *jesture_hm*
+hm                      Like previous mapping but opens in horizontal split.
+                        
+                                                *jesture-only-mappings*
+Only mappings~
+
+                                                *jesture_to*
+to                      Toggle current assertion between `it` and `it.only`.
+
+                                                *jesture_oo*
+oo                      Like previous mapping but also removes all other
+                        `only`s in buffer if it is toggling `only` on (making
+                        the assertion the Only Only).
+
+                                                *jesture_ro*
+ro                      Makes all `it.only` assertions simple `it` assertions
+                        (Removing Onlies).
+
+                                                *jesture-mocking-import-mappings*
+Mocking import mappings~
+
+                                                *jesture_mi*
+mi                      Mock import of current line in the next line.
+
+                        Example:
+                        Using `<leader>jmi` on either of the following lines
+
+                        `const example = require('../utils/example')`
+                        `import example from '../utils/example'`
+
+                        produces this on the next line
+
+                        `jest.mock('../utils/example')`
+
+ABOUT                                           *jesture-about*
+
+Grab the latest version or report a bug on GitHub:
+
+https://github.com/remyoudemans/vim-jesture
+
+ vim:tw=78:et:ft=help:norl:

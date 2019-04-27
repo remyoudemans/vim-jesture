@@ -1,6 +1,6 @@
 " Jest :JOnly or <leader>jo toggles whether current line's it is an it.only 
 "   and removes other it.only if there's already one in the buffer
-function! Onlify()
+function! JestureOnlify()
   let l:initialCursorPos = getcurpos()
   let l:lineno = line(".")
 
@@ -21,10 +21,10 @@ function! Onlify()
   execute l:lineno
   call setpos('.', l:initialCursorPos)
 endfunction
-nnoremap <silent> <leader>joo :call Onlify()<CR>
+nnoremap <silent> <leader>joo :call JestureOnlify()<CR>
 
 " Toggles whether block is an it.only but doesn't affect other assertions
-function! ToggleOnly()
+function! JestureToggleOnly()
   let l:initialCursorPos = getcurpos()
   let l:lineno = line(".")
 
@@ -39,10 +39,10 @@ function! ToggleOnly()
   execute l:lineno
   call setpos('.', l:initialCursorPos)
 endfunction
-nnoremap <silent> <leader>jto :call ToggleOnly()<CR>
+nnoremap <silent> <leader>jto :call JestureToggleOnly()<CR>
 
 " Removes only for current assertion (if present)
-function! RemoveOnly()
+function! JestureRemoveOnly()
   let l:initialCursorPos = getcurpos()
   let l:lineno = line(".")
   call cursor(0, 0)
@@ -52,26 +52,26 @@ function! RemoveOnly()
   execute l:lineno
   call setpos('.', l:initialCursorPos)
 endfunction
-nnoremap <silent> <leader>jro :call RemoveOnly()<CR>
+nnoremap <silent> <leader>jro :call JestureRemoveOnly()<CR>
 
-function! JestIt(...)
+function! JestureIt(...)
   let l:doneOrEmpty = a:0 > 0 && a:1 == 'd' ? 'done' : ''
 
   execute "normal! iit('should ', (" . l:doneOrEmpty . ") => {\<Esc>o})\<Esc>=kf l"
   execute ":startinsert"
 endfunction
-nnoremap <leader>jit :call JestIt()<CR>
-nnoremap <leader>jid :call JestIt('d')<CR>
+nnoremap <leader>jit :call JestureIt()<CR>
+nnoremap <leader>jid :call JestureIt('d')<CR>
 
-function! JestMock()
+function! JestureMockImport()
   execute "normal! 0"
   let l:quoteType = search("'", '', line(".")) == 0 ? '"' : "'"
   execute "normal! 0f" . l:quoteType . "yi" . l:quoteType . "ojest.mock(" . l:quoteType . "\<C-O>p" . l:quoteType . ")\<Esc>"
 endfunction
-nnoremap <leader>jm :call JestMock()<CR>
+nnoremap <leader>jmi :call JestureMockImport()<CR>
 
 
-function! AlternateMock(...)
+function! JestureAlternateMock(...)
   let l:openCommand = a:0 > 0 ? a:1 : 'e'
 
   if expand('%:p:h:t') == '__mocks__'
@@ -94,18 +94,18 @@ function! AlternateMock(...)
 endfunction
 
 " Opens the alternate mock (or non-mock if in a mock)
-nmap <silent> <leader>jam :call AlternateMock()<CR>
+nmap <silent> <leader>jam :call JestureAlternateMock()<CR>
 
 " As previous but in a vertical split
-nmap <silent> <leader>jvm :call AlternateMock('vsp')<CR>
+nmap <silent> <leader>jvm :call JestureAlternateMock('vsp')<CR>
 
 " As previous but in a horizontal split
-nmap <silent> <leader>jhm :call AlternateMock('sp')<CR>
+nmap <silent> <leader>jhm :call JestureAlternateMock('sp')<CR>
 
 " Alternate between file.(js|jsx|ts|tsx) and file.test.(js|jsx|ts|tsx). If you
 " already have a __tests__ directory at that level, it will go to
 " ./__tests__/file.test.(js|jsx|ts|tsx) instead of file.test.(js|jsx|ts|tsx).
-function! AlternateTest(...)
+function! JestureAlternateTest(...)
   let l:openCommand = a:0 > 0 ? a:1 : 'e'
   let l:isTestFile = expand('%:r:e') == 'test'
 
@@ -127,10 +127,11 @@ function! AlternateTest(...)
 endfunction
 
 " Opens the alternate test (or non-test if in a test)
-nmap <silent> <leader>jat :call AlternateTest()<CR>
+nmap <silent> <leader>jat :call JestureAlternateTest()<CR>
 
 " As previous but in a vertical split
-nmap <silent> <leader>jvt :call AlternateTest('vsp')<CR>
+nmap <silent> <leader>jvt :call JestureAlternateTest('vsp')<CR>
 
 " As previous but in a horizontal split
-nmap <silent> <leader>jht :call AlternateTest('sp')<CR>
+nmap <silent> <leader>jht :call JestureAlternateTest('sp')<CR>
+
