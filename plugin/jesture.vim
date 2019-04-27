@@ -54,15 +54,6 @@ function! JestureRemoveOnly()
 endfunction
 nnoremap <silent> <leader>jro :call JestureRemoveOnly()<CR>
 
-function! JestureIt(...)
-  let l:doneOrEmpty = a:0 > 0 && a:1 == 'd' ? 'done' : ''
-
-  execute "normal! iit('should ', (" . l:doneOrEmpty . ") => {\<Esc>o})\<Esc>=kf l"
-  execute ":startinsert"
-endfunction
-nnoremap <leader>jit :call JestureIt()<CR>
-nnoremap <leader>jid :call JestureIt('d')<CR>
-
 function! JestureMockImport()
   execute "normal! 0"
   let l:quoteType = search("'", '', line(".")) == 0 ? '"' : "'"
