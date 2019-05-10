@@ -1,45 +1,44 @@
 " Jest :JOnly or <leader>jo toggles whether current line's it is an it.only 
 "   and removes other it.only if there's already one in the buffer
-function! JestureOnlify()
+
+function! GoToItAssertionInCurrentLineOrPrevious()
+  let l:lineNumber = line(".") + 1
+  execute l:lineNumber
+  execute "normal! $"
+  call search('\(it(\|it.only(\)', "zb")
+endfunction
+
+function! AssertionBlockIsNotItOnly()
+  let l:lineNumber = line(".")
+  return search('it.only(', "cn", l:lineNumber) == 0
+endfunction
+
+function! RemoveAllItOnlyAssertionsInBuffer()
+  let l:lineNumber = line(".")
+  call cursor(0, 0)
+  if search('it.only(', "c") != 0
+    %s/it.only(/it(/
+  endif
+  call cursor(l:lineNumber, "$")
+endfunction
+
+function! JestureOnlify(shouldRemoveAllOtherOnlies)
   let l:initialCursorPos = getcurpos()
-  let l:lineno = line(".")
 
-  call cursor(l:lineno, "$") 
-  call search('\(it(\|it.only(\)', "b")
+  call GoToItAssertionInCurrentLineOrPrevious()
 
-  if search('it.only(', "cn", l:lineno) == 0
-    let l:relevantLineno = line(".")
-    call cursor(0, 0)
-    if search('it.only(', "c") != 0
-      %s/it.only(/it(/
+  if AssertionBlockIsNotItOnly()
+    if a:shouldRemoveAllOtherOnlies
+      call RemoveAllItOnlyAssertionsInBuffer()
     endif
-    call cursor(l:relevantLineno, "$")
     s/it(/it.only(/
   else
     s/it.only(/it(/
   endif
-  execute l:lineno
   call setpos('.', l:initialCursorPos)
 endfunction
-nnoremap <silent> <leader>joo :call JestureOnlify()<CR>
-
-" Toggles whether block is an it.only but doesn't affect other assertions
-function! JestureToggleOnly()
-  let l:initialCursorPos = getcurpos()
-  let l:lineno = line(".")
-
-  call cursor(l:lineno, "$") 
-  call search('\(it(\|it.only(\)', "b")
-
-  if search('it.only(', "cn", l:lineno) == 0
-    s/it(/it.only(/
-  else
-    s/it.only(/it(/
-  endif
-  execute l:lineno
-  call setpos('.', l:initialCursorPos)
-endfunction
-nnoremap <silent> <leader>jto :call JestureToggleOnly()<CR>
+nnoremap <silent> <leader>joo :call JestureOnlify(1)<CR>
+nnoremap <silent> <leader>jto :call JestureOnlify(0)<CR>
 
 " Removes only for current assertion (if present)
 function! JestureRemoveOnly()
