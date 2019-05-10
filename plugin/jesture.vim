@@ -10,15 +10,6 @@ function! s:assertionBlockIsNotItOnly()
   return search('it.only(', "cn", l:lineNumber) == 0
 endfunction
 
-function! s:removeAllItOnlyAssertionsInBuffer()
-  let l:lineNumber = line(".")
-  call cursor(0, 0)
-  if search('it.only(', "c") != 0
-    %s/it.only(/it(/
-  endif
-  call cursor(l:lineNumber, "$")
-endfunction
-
 function! JestureOnlify(shouldRemoveAllOtherOnlies)
   let l:initialCursorPos = getcurpos()
 
@@ -26,7 +17,7 @@ function! JestureOnlify(shouldRemoveAllOtherOnlies)
 
   if s:assertionBlockIsNotItOnly()
     if a:shouldRemoveAllOtherOnlies
-      call s:removeAllItOnlyAssertionsInBuffer()
+      call JestureRemoveOnlies()
     endif
     s/it(/it.only(/
   else
@@ -38,8 +29,7 @@ endfunction
 nnoremap <silent> <leader>joo :call JestureOnlify(1)<CR>
 nnoremap <silent> <leader>jto :call JestureOnlify(0)<CR>
 
-" Removes only for current assertion (if present)
-function! JestureRemoveOnly()
+function! JestureRemoveOnlies()
   let l:initialCursorPos = getcurpos()
 
   call cursor(0, 0)
@@ -49,7 +39,7 @@ function! JestureRemoveOnly()
 
   call setpos('.', l:initialCursorPos)
 endfunction
-nnoremap <silent> <leader>jro :call JestureRemoveOnly()<CR>
+nnoremap <silent> <leader>jro :call JestureRemoveOnlies()<CR>
 
 function! JestureMockImport()
   execute "normal! 0"
