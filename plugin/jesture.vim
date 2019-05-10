@@ -83,20 +83,21 @@ nmap <silent> <leader>jhm :call JestureAlternateMock('sp')<CR>
 " ./__tests__/file.test.(js|jsx|ts|tsx) instead of file.test.(js|jsx|ts|tsx).
 function! JestureAlternateTest(openCommand)
   let l:isTestFile = expand('%:r:e') == 'test'
+  let l:extension = '.' . expand('%:e')
 
   if l:isTestFile
     " if in __tests__ directory
     if expand('%:p:h:t') == '__tests__'
       " go to matching file outside __tests__ directory
-      execute a:openCommand . " " . expand('%:p:h:h') . '/' . expand('%:r:r') . '.' . expand('%:e')
+      execute a:openCommand . " " . expand('%:p:h:h') . '/' . expand('%:r:r') . l:extension
     else
-      execute a:openCommand . " " . expand('%:r:r') . '.' . expand('%:e')
+      execute a:openCommand . " " . expand('%:r:r') . l:extension
     endif
   else
     if isdirectory("__tests__")
-      execute a:openCommand . " __tests__/" . expand('%:r:t') . '.test.' . expand('%:e')
+      execute a:openCommand . " __tests__/" . expand('%:r:t') . '.test' . l:extension
     else 
-      execute a:openCommand . " " . expand('%:p:r:t') . '.test.' . expand('%:e')
+      execute a:openCommand . " " . expand('%:p:r:t') . '.test' . l:extension
     endif
   endif
 endfunction
