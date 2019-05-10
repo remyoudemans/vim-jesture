@@ -1,58 +1,45 @@
-" Jest :JOnly or <leader>jo toggles whether current line's it is an it.only 
-"   and removes other it.only if there's already one in the buffer
-function! JestureOnlify()
+function! s:goToItAssertionInCurrentLineOrPrevious()
+  let l:lineNumber = line(".") + 1
+  execute l:lineNumber
+  execute "normal! $"
+  call search('\(it(\|it.only(\)', "zb")
+endfunction
+
+function! s:assertionBlockIsNotItOnly()
+  let l:lineNumber = line(".")
+  return search('it.only(', "cn", l:lineNumber) == 0
+endfunction
+
+function! JestureOnlify(shouldRemoveAllOtherOnlies)
   let l:initialCursorPos = getcurpos()
-  let l:lineno = line(".")
 
-  call cursor(l:lineno, "$") 
-  call search('\(it(\|it.only(\)', "b")
+  call s:goToItAssertionInCurrentLineOrPrevious()
 
-  if search('it.only(', "cn", l:lineno) == 0
-    let l:relevantLineno = line(".")
-    call cursor(0, 0)
-    if search('it.only(', "c") != 0
-      %s/it.only(/it(/
+  if s:assertionBlockIsNotItOnly()
+    if a:shouldRemoveAllOtherOnlies
+      call JestureRemoveOnlies()
     endif
-    call cursor(l:relevantLineno, "$")
     s/it(/it.only(/
   else
     s/it.only(/it(/
   endif
-  execute l:lineno
+
   call setpos('.', l:initialCursorPos)
 endfunction
-nnoremap <silent> <leader>joo :call JestureOnlify()<CR>
+nnoremap <silent> <leader>joo :call JestureOnlify(1)<CR>
+nnoremap <silent> <leader>jto :call JestureOnlify(0)<CR>
 
-" Toggles whether block is an it.only but doesn't affect other assertions
-function! JestureToggleOnly()
+function! JestureRemoveOnlies()
   let l:initialCursorPos = getcurpos()
-  let l:lineno = line(".")
 
-  call cursor(l:lineno, "$") 
-  call search('\(it(\|it.only(\)', "b")
-
-  if search('it.only(', "cn", l:lineno) == 0
-    s/it(/it.only(/
-  else
-    s/it.only(/it(/
-  endif
-  execute l:lineno
-  call setpos('.', l:initialCursorPos)
-endfunction
-nnoremap <silent> <leader>jto :call JestureToggleOnly()<CR>
-
-" Removes only for current assertion (if present)
-function! JestureRemoveOnly()
-  let l:initialCursorPos = getcurpos()
-  let l:lineno = line(".")
   call cursor(0, 0)
   if search('it.only(', "cn") != 0
     %s/it.only(/it(/
   endif
-  execute l:lineno
+
   call setpos('.', l:initialCursorPos)
 endfunction
-nnoremap <silent> <leader>jro :call JestureRemoveOnly()<CR>
+nnoremap <silent> <leader>jro :call JestureRemoveOnlies()<CR>
 
 function! JestureMockImport()
   execute "normal! 0"
@@ -62,11 +49,9 @@ endfunction
 nnoremap <leader>jmi :call JestureMockImport()<CR>
 
 
-function! JestureAlternateMock(...)
-  let l:openCommand = a:0 > 0 ? a:1 : 'e'
-
+function! JestureAlternateMock(openCommand)
   if expand('%:p:h:t') == '__mocks__'
-    execute l:openCommand " " . expand('%:p:h:h') . '/' . expand('%')
+    execute a:openCommand " " . expand('%:p:h:h') . '/' . expand('%')
   else
     if !isdirectory("__mocks__")
       call inputsave()
@@ -80,12 +65,12 @@ function! JestureAlternateMock(...)
       call mkdir("__mocks__")
       echom "__mocks__ directory created."
     endif
-    execute l:openCommand . " " . expand('%:p:h') . '/__mocks__/' . expand('%')
+    execute a:openCommand . " " . expand('%:p:h') . '/__mocks__/' . expand('%')
   endif
 endfunction
 
 " Opens the alternate mock (or non-mock if in a mock)
-nmap <silent> <leader>jam :call JestureAlternateMock()<CR>
+nmap <silent> <leader>jam :call JestureAlternateMock('e')<CR>
 
 " As previous but in a vertical split
 nmap <silent> <leader>jvm :call JestureAlternateMock('vsp')<CR>
@@ -96,29 +81,29 @@ nmap <silent> <leader>jhm :call JestureAlternateMock('sp')<CR>
 " Alternate between file.(js|jsx|ts|tsx) and file.test.(js|jsx|ts|tsx). If you
 " already have a __tests__ directory at that level, it will go to
 " ./__tests__/file.test.(js|jsx|ts|tsx) instead of file.test.(js|jsx|ts|tsx).
-function! JestureAlternateTest(...)
-  let l:openCommand = a:0 > 0 ? a:1 : 'e'
+function! JestureAlternateTest(openCommand)
   let l:isTestFile = expand('%:r:e') == 'test'
+  let l:extension = '.' . expand('%:e')
 
   if l:isTestFile
     " if in __tests__ directory
     if expand('%:p:h:t') == '__tests__'
       " go to matching file outside __tests__ directory
-      execute l:openCommand . " " . expand('%:p:h:h') . '/' . expand('%:r:r') . '.' . expand('%:e')
+      execute a:openCommand . " " . expand('%:p:h:h') . '/' . expand('%:r:r') . l:extension
     else
-      execute l:openCommand . " " . expand('%:r:r') . '.' . expand('%:e')
+      execute a:openCommand . " " . expand('%:r:r') . l:extension
     endif
   else
     if isdirectory("__tests__")
-      execute l:openCommand . " __tests__/" . expand('%:r:t') . '.test.' . expand('%:e')
+      execute a:openCommand . " __tests__/" . expand('%:r:t') . '.test' . l:extension
     else 
-      execute l:openCommand . " " . expand('%:p:r:t') . '.test.' . expand('%:e')
+      execute a:openCommand . " " . expand('%:p:r:t') . '.test' . l:extension
     endif
   endif
 endfunction
 
 " Opens the alternate test (or non-test if in a test)
-nmap <silent> <leader>jat :call JestureAlternateTest()<CR>
+nmap <silent> <leader>jat :call JestureAlternateTest('e')<CR>
 
 " As previous but in a vertical split
 nmap <silent> <leader>jvt :call JestureAlternateTest('vsp')<CR>
